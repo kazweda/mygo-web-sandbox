@@ -37,12 +37,11 @@ jobs:
         run: |
           make build
 
-      - name: Commit updated docs
-        run: |
-          git add docs
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-          else
-            git commit -m "Update docs/index.html from issue #${{ github.event.issue.number }} (CI)"
-            git push
-          fi
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.MYGO_GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: docs
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
