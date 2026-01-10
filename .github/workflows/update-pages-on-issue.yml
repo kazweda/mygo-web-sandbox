@@ -25,6 +25,12 @@ jobs:
       - name: Install templ CLI
         run: go install github.com/a-h/templ/cmd/templ@v0.3.977
 
+      - name: Pull latest changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+
       - name: Generate and Build
         env:
           GITHUB_TOKEN: ${{ secrets.MYGO_GITHUB_TOKEN }}
@@ -33,9 +39,6 @@ jobs:
 
       - name: Commit updated docs
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main
           git add docs
           if git diff --cached --quiet; then
             echo "No changes to commit."
