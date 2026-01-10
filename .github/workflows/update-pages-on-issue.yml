@@ -16,7 +16,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.MYGO_GITHUB_TOKEN }}
 
       - name: Setup Go
         uses: actions/setup-go@v5
