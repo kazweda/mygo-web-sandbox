@@ -1,6 +1,12 @@
 package templates
 
-templ Page() {
+type Location struct {
+  Name string
+  Lat  float64
+  Lon  float64
+}
+
+templ Page(loc Location) {
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -10,6 +16,13 @@ templ Page() {
     <body>
       <h1>Go Web Sandbox</h1>
       <p>This page is generated at build time.</p>
+
+      <section>
+        <h2>Location</h2>
+        <p><strong>Name:</strong> { loc.Name }</p>
+        <p><strong>Latitude:</strong> { loc.Lat }</p>
+        <p><strong>Longitude:</strong> { loc.Lon }</p>
+      </section>
     </body>
   </html>
 }
