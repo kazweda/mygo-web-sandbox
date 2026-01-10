@@ -168,12 +168,63 @@ func fetchWeather(ctx context.Context, lat, lon float64) (templates.Weather, err
 		return templates.Weather{}, err
 	}
 
+	code := om.CurrentWeather.Weathercode
+	text := weatherCodeText[code]
+	if text == "" {
+		text = "Unknown"
+	}
+	emoji := weatherCodeEmoji[code]
+	if emoji == "" {
+		emoji = "❓"
+	}
 	return templates.Weather{
 		Temperature:   om.CurrentWeather.Temperature,
 		Windspeed:     om.CurrentWeather.Windspeed,
 		Winddirection: om.CurrentWeather.Winddirection,
-		Weathercode:   om.CurrentWeather.Weathercode,
+		Weathercode:   code,
 		IsDay:         om.CurrentWeather.IsDay,
 		Time:          om.CurrentWeather.Time,
+		CodeText:      text,
+		CodeEmoji:     emoji,
 	}, nil
+}
+
+var weatherCodeText = map[int]string{
+	0:  "Clear sky",
+	1:  "Mainly clear",
+	2:  "Partly cloudy",
+	3:  "Overcast",
+	45: "Fog",
+	48: "Depositing rime fog",
+	51: "Light drizzle",
+	53: "Moderate drizzle",
+	55: "Dense drizzle",
+	61: "Slight rain",
+	63: "Moderate rain",
+	65: "Heavy rain",
+	71: "Slight snow fall",
+	73: "Moderate snow fall",
+	75: "Heavy snow fall",
+	80: "Rain showers",
+	95: "Thunderstorm",
+}
+
+var weatherCodeEmoji = map[int]string{
+	0:  "☀️",
+	1:  "🌤",
+	2:  "⛅",
+	3:  "☁️",
+	45: "🌫",
+	48: "🌫",
+	51: "🌦",
+	53: "🌦",
+	55: "🌧",
+	61: "🌧",
+	63: "🌧",
+	65: "🌧",
+	71: "🌨",
+	73: "🌨",
+	75: "❄️",
+	80: "🌦",
+	95: "⛈",
 }

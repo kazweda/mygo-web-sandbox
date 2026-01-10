@@ -13,6 +13,8 @@ type Weather struct {
   Weathercode   int
   IsDay         int
   Time          string
+  CodeText      string
+  CodeEmoji     string
 }
 
 templ Page(loc Location, weather Weather) {
@@ -38,7 +40,7 @@ templ Page(loc Location, weather Weather) {
         <p><strong>Temperature:</strong> { weather.Temperature } °C</p>
         <p><strong>Windspeed:</strong> { weather.Windspeed } m/s</p>
         <p><strong>Winddirection:</strong> { weather.Winddirection }°</p>
-        <p><strong>Weather Code:</strong> { weather.Weathercode }</p>
+        <p><strong>Condition:</strong> { weather.CodeText } { weather.CodeEmoji } (code { weather.Weathercode })</p>
         <p><strong>Updated:</strong> { weather.Time }</p>
       </section>
     </body>
