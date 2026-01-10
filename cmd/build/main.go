@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -24,6 +25,11 @@ func main() {
 		panic(err)
 	}
 
+	weather, err := fetchWeather(ctx, loc.Lat, loc.Lon)
+	if err != nil {
+		panic(err)
+	}
+
 	outDir := "docs"
 	outFile := filepath.Join(outDir, "index.html")
 
@@ -37,7 +43,7 @@ func main() {
 	}
 	defer f.Close()
 
-	if err := templates.Page(loc).Render(ctx, f); err != nil {
+	if err := templates.Page(loc, weather).Render(ctx, f); err != nil {
 		panic(err)
 	}
 }
@@ -119,4 +125,55 @@ func decodeIssuePayload(raw string) (issuePayload, error) {
 		return issuePayload{}, err
 	}
 	return p, nil
+}
+
+// Open-Meteo: Fetch current weather for given lat/lon
+func fetchWeather(ctx context.Context, lat, lon float64) (templates.Weather, error) {
+	base := "https://api.open-meteo.com/v1/forecast"
+	q := url.Values{}
+	q.Set("latitude", fmt.Sprintf("%f", lat))
+	q.Set("longitude", fmt.Sprintf("%f", lon))
+	q.Set("current_weather", "true")
+	u := base + "?" + q.Encode()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+	if err != nil {
+		return templates.Weather{}, err
+	}
+
+	client := &http.Client{Timeout: 20 * time.Second}
+	res, err := client.Do(req)
+	if err != nil {
+		return templates.Weather{}, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		b, _ := io.ReadAll(io.LimitReader(res.Body, 1024))
+		return templates.Weather{}, fmt.Errorf("open-meteo fetch failed: status=%d body=%s", res.StatusCode, string(b))
+	}
+
+	var om struct {
+		CurrentWeather struct {
+			Temperature   float64 `json:"temperature"`
+			Windspeed     float64 `json:"windspeed"`
+			Winddirection float64 `json:"winddirection"`
+			Weathercode   int     `json:"weathercode"`
+			IsDay         int     `json:"is_day"`
+			Time          string  `json:"time"`
+		} `json:"current_weather"`
+	}
+
+	if err := json.NewDecoder(res.Body).Decode(&om); err != nil {
+		return templates.Weather{}, err
+	}
+
+	return templates.Weather{
+		Temperature:   om.CurrentWeather.Temperature,
+		Windspeed:     om.CurrentWeather.Windspeed,
+		Winddirection: om.CurrentWeather.Winddirection,
+		Weathercode:   om.CurrentWeather.Weathercode,
+		IsDay:         om.CurrentWeather.IsDay,
+		Time:          om.CurrentWeather.Time,
+	}, nil
 }

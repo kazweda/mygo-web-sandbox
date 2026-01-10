@@ -6,7 +6,16 @@ type Location struct {
   Lon  float64
 }
 
-templ Page(loc Location) {
+type Weather struct {
+  Temperature   float64
+  Windspeed     float64
+  Winddirection float64
+  Weathercode   int
+  IsDay         int
+  Time          string
+}
+
+templ Page(loc Location, weather Weather) {
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -22,6 +31,15 @@ templ Page(loc Location) {
         <p><strong>Name:</strong> { loc.Name }</p>
         <p><strong>Latitude:</strong> { loc.Lat }</p>
         <p><strong>Longitude:</strong> { loc.Lon }</p>
+      </section>
+
+      <section>
+        <h2>Weather (Open-Meteo)</h2>
+        <p><strong>Temperature:</strong> { weather.Temperature } °C</p>
+        <p><strong>Windspeed:</strong> { weather.Windspeed } m/s</p>
+        <p><strong>Winddirection:</strong> { weather.Winddirection }°</p>
+        <p><strong>Weather Code:</strong> { weather.Weathercode }</p>
+        <p><strong>Updated:</strong> { weather.Time }</p>
       </section>
     </body>
   </html>
