@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/kazweda/go-web-sandbox/templates"
+	"github.com/kazweda/mygo-web-sandbox/templates"
 )
 
 func main() {

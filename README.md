@@ -1,4 +1,4 @@
-# go-web-sandbox
+# mygo-web-sandbox
 
 A minimal sandbox repository for hackathons.
 

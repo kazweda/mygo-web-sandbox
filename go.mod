@@ -1,4 +1,4 @@
-module github.com/kazweda/go-web-sandbox
+module github.com/kazweda/mygo-web-sandbox
 
 go 1.25.5
 
